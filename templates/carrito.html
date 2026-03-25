@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card-luxury { border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .bg-figueroa { background: #2c3e50; color: white; }
+        .product-thumb { width: 70px; height: 70px; object-fit: cover; border-radius: 12px; }
+        .btn-continue { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white; transition: 0.3s; }
+        .btn-continue:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; }
+    </style>
+</head>
+<body>
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card card-luxury p-4 h-100">
+                <h4 class="fw-bold mb-4">Tu Selección 🛠️</h4>
+                {% if items %}
+                    {% for item in items %}
+                    <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+                        <div class="d-flex align-items-center">
+                            <img src="{{ url_for('display_image', filename=item.imagen) }}" class="product-thumb me-3">
+                            <div><h6 class="mb-0 fw-bold">{{ item.nombre }}</h6><small class="text-muted">Artesanía Figueroa</small></div>
+                        </div>
+                        <span class="fw-bold text-success">${{ item.precio }}</span>
+                        <a href="{{ url_for('remove_cart', index=loop.index0) }}" class="btn text-danger btn-sm ms-2"><i class="fas fa-trash"></i></a>
+                    </div>
+                    {% endfor %}
+                    <div class="d-flex justify-content-between mt-4">
+                        <h4 class="fw-bold">Total:</h4><h4 class="text-success fw-bold">${{ total }}</h4>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5"><h5>Carrito vacío</h5><a href="/catalogo" class="btn btn-primary mt-3">Ver Galería</a></div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card card-luxury bg-figueroa p-4 shadow-lg">
+                <h4 class="fw-bold mb-4">Facturación Electrónica</h4>
+                <form action="{{ url_for('checkout') }}" method="POST">
+                    <div class="mb-3">
+                        <label class="small opacity-75">Razón Social</label>
+                        <input type="text" name="razon_social" class="form-control bg-light border-0" value="{{ current_user.nombre }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="small opacity-75">RUC/CI</label>
+                        <input type="text" name="identificacion" class="form-control bg-light border-0" placeholder="17xxxxxxxx" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="small opacity-75">Correo para Factura</label>
+                        <input type="email" name="email_factura" class="form-control bg-light border-0" value="{{ current_user.email }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-lg w-100 fw-bold py-3 shadow mb-3">PEDIR POR WHATSAPP</button>
+                    <a href="/catalogo" class="btn btn-continue w-100 fw-bold py-2 rounded-3">
+                        <i class="fas fa-arrow-left me-2"></i>SEGUIR COMPRANDO
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
