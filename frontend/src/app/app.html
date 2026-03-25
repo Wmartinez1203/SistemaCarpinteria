@@ -1,44 +1,23 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm py-3">
+<nav class="navbar navbar-dark bg-dark p-3">
   <div class="container">
-    <a class="navbar-brand d-flex align-items-center" href="#">
-      <i class="bi bi-hammer me-2 text-primary"></i>
-      <span class="fw-bold text-uppercase tracking-wider">Muebles Figueroa</span>
-    </a>
-    <div class="ms-auto d-none d-md-block">
-      <span class="badge bg-primary rounded-pill px-3 py-2">
-        <i class="bi bi-person-badge me-1"></i> {{ usuario }} | {{ semestre }}
-      </span>
-    </div>
+    <span class="navbar-brand">🛠️ {{ title }}</span>
+    <span class="text-white small italic">Bienvenido, {{ usuario }}</span>
   </div>
 </nav>
 
 <div class="container mt-5">
-  <div class="row align-items-center">
-    <div class="col-lg-6 text-center text-lg-start">
-      <h1 class="display-3 fw-bold text-dark">El arte de la madera, <span class="text-primary italic">una herencia Figueroa.</span></h1>
-      <p class="lead text-muted mt-4">
-        Bienvenido a la nueva plataforma tecnológica de la carpintería. 
-        Ahora bajo una arquitectura moderna en **Angular 19**.
-      </p>
-      <div class="mt-5 d-flex gap-3 justify-content-center justify-content-lg-start">
-        <button class="btn btn-primary btn-lg rounded-pill px-4 shadow">
-          <i class="bi bi-shop me-2"></i> Ver Catálogo
-        </button>
-        <button class="btn btn-outline-dark btn-lg rounded-pill px-4">
-          Panel Admin
-        </button>
-      </div>
-    </div>
-    <div class="col-lg-6 mt-5 mt-lg-0">
-      <div class="bg-light border rounded-5 p-5 shadow-sm text-center">
-        <i class="bi bi-image text-muted display-1"></i>
-        <p class="text-muted mt-3">Aquí irán las fotos de tus mejores muebles</p>
+  <h2 class="mb-4">Nuestro Catálogo</h2>
+  <div class="row">
+    <div class="col-md-4 mb-4" *ngFor="let m of muebles">
+      <div class="card shadow-sm h-100">
+        <img [src]="m.imagen" class="card-img-top" [alt]="m.nombre" style="height: 200px; object-fit: cover;">
+        <div class="card-body">
+          <h5 class="card-title">{{ m.nombre }}</h5>
+          <p class="text-muted small">{{ m.categoria }}</p>
+          <p class="fw-bold text-primary">${{ m.precio }}</p>
+          <button class="btn btn-outline-dark btn-sm w-100">Ver detalles</button>
+        </div>
       </div>
     </div>
   </div>
 </div>
-
-<a href="https://wa.me/593963120573" class="wa-float text-white shadow-lg" target="_blank" 
-   style="position: fixed; bottom: 30px; right: 30px; background: #25d366; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; text-decoration: none; z-index: 1000;">
-  <i class="bi bi-whatsapp"></i>
-</a>
