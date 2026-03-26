@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, NgZone, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { AppComponent } from '../app';
 
 @Component({
@@ -10,26 +11,73 @@ import { AppComponent } from '../app';
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './register.html'
 })
-export class Register {
+export class Register implements OnInit {
   private router = inject(Router);
+  private http = inject(HttpClient);
   private appMain = inject(AppComponent);
+  private ngZone = inject(NgZone);
+  private platformId = inject(PLATFORM_ID);
 
-  nombre = '';
-  email = '';
-  password = '';
-
-  onRegister() {
-    // Simulamos el registro para usuarios normales
-    this.appMain.usuario = this.nombre || this.email.split('@')[0];
-    this.appMain.isAdmin = false; 
-    alert('¡Registro exitoso! Bienvenido a Muebles Figueroa.');
-    this.router.navigate(['/catalogo']);
+  ngOnInit() {
+    // Solo ejecutamos esto si estamos en el navegador, no en el servidor
+    if (isPlatformBrowser(this.platformId)) {
+      this.initGoogle();
+    }
   }
 
-  loginSocial(red: string) {
-    alert(`Conectando con la API de ${red}...`);
-    this.appMain.usuario = `Usuario_${red}`;
-    this.appMain.isAdmin = false;
-    this.router.navigate(['/catalogo']);
+  initGoogle() {
+    // Esperamos un segundo para asegurar que el script de index.html cargó
+    setTimeout(() => {
+      // @ts-ignore
+      if (typeof google !== 'undefined') {
+        // @ts-ignore
+        google.accounts.id.initialize({
+          client_id: '286803224541-tuns40h7tvh47cumqqa0r4fjfi0ddgnl.apps.googleusercontent.com',
+          callback: (resp: any) => this.handleGoogleLogin(resp)
+        });
+      }
+    }, 1000);
+  }
+
+  handleGoogleLogin(response: any) {
+    const payload = JSON.parse(window.atob(response.credential.split('.')[1]));
+    this.ngZone.run(() => {
+      this.http.post('http://localhost:5000/api/registro', {
+        nombre: payload.name,
+        email: payload.email
+      }).subscribe({
+        next: () => {
+          this.appMain.usuario = payload.name;
+          this.appMain.isAdmin = (payload.email === 'gladimirldu@gmail.com');
+          this.router.navigate(['/catalogo']);
+        }
+      });
+    });
+  }
+
+  onRegister(datos: any) {
+    this.http.post('http://localhost:5000/api/registro', datos).subscribe({
+      next: () => {
+        this.appMain.usuario = datos.nombre;
+        this.appMain.isAdmin = false;
+        this.router.navigate(['/catalogo']);
+      },
+      error: () => alert('Error en el registro manual.')
+    });
+  }
+
+  loginGoogle() {
+    // @ts-ignore
+    if (typeof google !== 'undefined') {
+      // @ts-ignore
+      google.accounts.id.prompt();
+    } else {
+      alert('Cargando servicios de Google... intenta en un segundo.');
+    }
+  }
+
+  // Pendiente para cuando llegues a casa
+  loginFacebook() {
+    alert('Función restringida en el trabajo. La activaremos más tarde.');
   }
 }
