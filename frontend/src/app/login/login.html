@@ -1,0 +1,30 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-4">
+      <div class="card shadow border-0 p-4">
+        <div class="text-center mb-4">
+          <i class="bi bi-person-lock fs-1 text-primary"></i>
+          <h2 class="h4">Acceso al Sistema</h2>
+        </div>
+        
+        <form (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Correo Electrónico</label>
+            <input type="email" name="email" [(ngModel)]="email" class="form-control rounded-pill" placeholder="ejemplo@uce.edu.ec" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Contraseña</label>
+            <input type="password" name="password" [(ngModel)]="password" class="form-control rounded-pill" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 mt-3">
+            Ingresar
+          </button>
+        </form>
+        
+        <div class="text-center mt-3">
+          <a routerLink="/catalogo" class="text-muted small text-decoration-none">Volver al catálogo</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
