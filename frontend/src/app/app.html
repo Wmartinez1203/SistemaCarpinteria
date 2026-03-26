@@ -1,23 +1,37 @@
-<nav class="navbar navbar-dark bg-dark p-3">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
   <div class="container">
-    <span class="navbar-brand">🛠️ {{ title }}</span>
-    <span class="text-white small italic">Bienvenido, {{ usuario }}</span>
+    <a class="navbar-brand fw-bold" routerLink="/">🛠️ Muebles Figueroa</a>
+    
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item"><a class="nav-link" routerLink="/catalogo">Catálogo</a></li>
+        
+        <li class="nav-item mx-2">
+          <a class="nav-link position-relative" routerLink="/carrito">
+            <i class="bi bi-cart3 fs-5"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" *ngIf="cartCount > 0">
+              {{ cartCount }}
+            </span>
+          </a>
+        </li>
+
+        <li class="nav-item ms-lg-3" *ngIf="!usuario">
+          <div class="btn-group">
+            <a class="btn btn-primary btn-sm rounded-start-pill px-3" routerLink="/login">Ingresar</a>
+            <a class="btn btn-outline-primary btn-sm rounded-end-pill px-3" routerLink="/register">Registrarse</a>
+          </div>
+        </li>
+
+        <li class="nav-item ms-lg-3 border-start ps-3 d-flex align-items-center" *ngIf="usuario">
+          <span class="text-white small me-3">
+            <i class="bi" [ngClass]="isAdmin ? 'bi-shield-check text-warning' : 'bi-person-circle'"></i> 
+            {{ usuario }}
+          </span>
+          <button class="btn btn-outline-danger btn-sm rounded-pill px-3" (click)="logout()">Salir</button>
+        </li>
+      </ul>
+    </div>
   </div>
 </nav>
 
-<div class="container mt-5">
-  <h2 class="mb-4">Nuestro Catálogo</h2>
-  <div class="row">
-    <div class="col-md-4 mb-4" *ngFor="let m of muebles">
-      <div class="card shadow-sm h-100">
-        <img [src]="m.imagen" class="card-img-top" [alt]="m.nombre" style="height: 200px; object-fit: cover;">
-        <div class="card-body">
-          <h5 class="card-title">{{ m.nombre }}</h5>
-          <p class="text-muted small">{{ m.categoria }}</p>
-          <p class="fw-bold text-primary">${{ m.precio }}</p>
-          <button class="btn btn-outline-dark btn-sm w-100">Ver detalles</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+<router-outlet></router-outlet>
