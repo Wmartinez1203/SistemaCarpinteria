@@ -30,7 +30,7 @@ Este proyecto es una plataforma integral de **E-commerce** y administración de 
 ## 🔧 Instalación y Configuración
 
 ### 1. Clonar el repositorio
-bash
+´bash
 git clone [https://github.com/Wmartinez1203/SistemaCarpinteria.git](https://github.com/Wmartinez1203/SistemaCarpinteria.git)
 cd SistemaCarpinteria
 Crear entorno virtual
