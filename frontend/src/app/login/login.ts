@@ -5,6 +5,8 @@ import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AppComponent } from '../app';
 
+declare var Swal: any;
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -20,12 +22,16 @@ export class Login implements OnInit {
 
   email = '';
   password = '';
+  showPassword = false;
 
   ngOnInit() {
-    // Solo inicializamos si estamos en el navegador para evitar el ReferenceError
     if (isPlatformBrowser(this.platformId)) {
       this.initGoogleLogin();
     }
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
   }
 
   initGoogleLogin() {
@@ -38,7 +44,6 @@ export class Login implements OnInit {
           callback: (resp: any) => this.handleGoogleResponse(resp)
         });
         
-        // Renderizamos el botón oficial en el contenedor que tengas en tu HTML
         // @ts-ignore
         google.accounts.id.renderButton(
           document.getElementById("googleBtn"), 
@@ -48,39 +53,72 @@ export class Login implements OnInit {
     }, 1000);
   }
 
+  private guardarSesionYEntrar(nombre: string, email: string, isAdmin: boolean) {
+    const sesion = { nombre, email, isAdmin };
+    localStorage.setItem('figueroa_session', JSON.stringify(sesion));
+    
+    this.appMain.usuario = nombre;
+    this.appMain.isAdmin = isAdmin;
+    this.router.navigate(['/catalogo']);
+  }
+
   handleGoogleResponse(response: any) {
-    // Decodificamos el perfil del usuario desde el token JWT
     const payload = JSON.parse(window.atob(response.credential.split('.')[1]));
     
     this.ngZone.run(() => {
-      // Verificamos o registramos en tu PostgreSQL
       this.http.post('http://127.0.0.1:5000/api/registro', {
         nombre: payload.name,
-        email: payload.email
+        email: payload.email,
+        password: 'google_user' 
       }).subscribe({
         next: () => {
-          this.appMain.usuario = payload.name;
-          // Si eres tú, activamos el modo Admin
-          this.appMain.isAdmin = (payload.email === 'gladimirldu@gmail.com');
-          this.router.navigate(['/catalogo']);
+          const isAdmin = (payload.email === 'wladimirmartinez1203@gmail.com');
+          this.notificarExito(`¡Hola, ${payload.name}!`, 'Sesión con Google iniciada');
+          this.guardarSesionYEntrar(payload.name, payload.email, isAdmin);
         },
-        error: () => alert('Error de conexión con el servidor Figueroa')
+        error: () => {
+          const isAdmin = (payload.email === 'wladimirmartinez1203@gmail.com');
+          this.guardarSesionYEntrar(payload.name, payload.email, isAdmin);
+        }
       });
     });
   }
 
   onSubmit() {
-    // Tu lógica de "Orden 66" para acceso directo
-    if (this.email === 'gladimirldu@gmail.com' && this.password === 'Orden_66') {
-      this.appMain.usuario = 'Fernando Martínez (Admin)';
-      this.appMain.isAdmin = true;
-      alert('Acceso Total Concedido, Ingeniero.');
-      this.router.navigate(['/catalogo']);
-    } 
-    else if (this.email !== '' && this.password !== '') {
-      this.appMain.usuario = this.email.split('@')[0];
-      this.appMain.isAdmin = false;
-      this.router.navigate(['/catalogo']);
-    } 
+    if (!this.email || !this.password) {
+      Swal.fire({ icon: 'warning', title: 'Atención', text: 'Completa los campos.' });
+      return;
+    }
+
+    this.http.post<any>('http://127.0.0.1:5000/api/login', {
+      email: this.email,
+      password: this.password
+    }).subscribe({
+      next: (res) => {
+        this.notificarExito(res.isAdmin ? 'Acceso Admin Concedido' : '¡Bienvenido!', `Hola, ${res.nombre}`);
+        this.guardarSesionYEntrar(res.nombre, res.email, res.isAdmin);
+      },
+      error: () => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Acceso Denegado',
+          text: 'Correo o contraseña incorrectos',
+          confirmButtonColor: '#212529'
+        });
+        this.password = ''; 
+      }
+    });
+  }
+
+  private notificarExito(title: string, text: string) {
+    Swal.fire({
+      icon: 'success',
+      title: title,
+      text: text,
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
   }
 }

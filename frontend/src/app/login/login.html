@@ -9,10 +9,22 @@
         
         <form (ngSubmit)="onSubmit()">
           <div class="mb-3">
-            <input type="email" name="email" [(ngModel)]="email" class="form-control rounded-pill bg-light border-0" placeholder="Correo Electrónico" required>
+            <input type="email" name="email" [(ngModel)]="email" 
+                   class="form-control rounded-pill bg-light border-0 px-3" 
+                   placeholder="Correo Electrónico" required>
           </div>
-          <div class="mb-3">
-            <input type="password" name="password" [(ngModel)]="password" class="form-control rounded-pill bg-light border-0" placeholder="Contraseña" required>
+
+          <div class="mb-3 position-relative">
+            <div class="input-group">
+              <input [type]="showPassword ? 'text' : 'password'" 
+                     name="password" [(ngModel)]="password" 
+                     class="form-control rounded-start-pill bg-light border-0 px-3" 
+                     placeholder="Contraseña" required>
+              <button class="btn btn-light rounded-end-pill border-0 px-3" 
+                      type="button" (click)="togglePassword()">
+                <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash-fill' : 'bi-eye-fill'"></i>
+              </button>
+            </div>
           </div>
 
           <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 mt-2 shadow-sm">

@@ -1,0 +1,85 @@
+<div class="container mt-5" style="margin-top: 100px !important;">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card shadow border-0 p-4 rounded-4">
+        <h4 class="fw-bold mb-4 text-primary">
+          <i class="bi" [ngClass]="editando ? 'bi-pencil-square' : 'bi-plus-circle'"></i>
+          {{ editando ? 'Editar Mueble' : 'Nuevo Mueble' }}
+        </h4>
+        <form (ngSubmit)="guardar()">
+          <div class="mb-3">
+            <label class="small fw-bold">Nombre</label>
+            <input type="text" [(ngModel)]="nuevo.nombre" name="nombre" class="form-control bg-light" required>
+          </div>
+          <div class="row">
+            <div class="col-6 mb-3">
+              <label class="small fw-bold">Categoría</label>
+              <select [(ngModel)]="nuevo.categoria" name="categoria" class="form-select bg-light">
+                <option value="Salas">Salas</option>
+                <option value="Comedores">Comedores</option>
+                <option value="Dormitorios">Dormitorios</option>
+              </select>
+            </div>
+            <div class="col-6 mb-3">
+              <label class="small fw-bold">Precio ($)</label>
+              <input type="number" [(ngModel)]="nuevo.precio" name="precio" class="form-control bg-light" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="small fw-bold">Medidas</label>
+            <input type="text" [(ngModel)]="nuevo.medidas" name="medidas" class="form-control bg-light">
+          </div>
+          <div class="mb-3">
+            <label class="small fw-bold">Descripción</label>
+            <textarea [(ngModel)]="nuevo.detalle" name="detalle" class="form-control bg-light" rows="2"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="small fw-bold">Imagen</label>
+            <input type="file" (change)="onFileSelected($event)" class="form-control bg-light">
+          </div>
+          
+          <button type="submit" class="btn btn-primary w-100 rounded-pill mt-2 shadow-sm">
+            {{ editando ? 'Guardar Cambios' : 'Publicar Producto' }}
+          </button>
+          <button *ngIf="editando" type="button" (click)="limpiarFormulario()" class="btn btn-link w-100 text-muted mt-2">Cancelar</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card shadow border-0 p-4 rounded-4">
+        <h4 class="fw-bold mb-4">Inventario Real</h4>
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Imagen</th>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of productos">
+                <td><img [src]="p.imagen_url" class="rounded" style="width: 45px; height: 45px; object-fit: cover;"></td>
+                <td>
+                  <div class="fw-bold text-dark">{{p.nombre}}</div>
+                  <small class="badge bg-secondary opacity-75">{{p.categoria}}</small>
+                </td>
+                <td class="fw-bold text-primary">${{p.precio}}</td>
+                <td class="text-center">
+                  <button class="btn btn-sm btn-outline-primary me-2 border-0" (click)="prepararEdicion(p)">
+                    <i class="bi bi-pencil-fill"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger border-0" (click)="borrar(p.id)">
+                    <i class="bi bi-trash3-fill"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

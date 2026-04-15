@@ -1,37 +1,66 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm py-3">
   <div class="container">
-    <a class="navbar-brand fw-bold" routerLink="/">🛠️ Muebles Figueroa</a>
+    <a class="navbar-brand fw-bold d-flex align-items-center" routerLink="/">
+      <img src="logo-figueroa.jpg" 
+           alt="Logo Figueroa" 
+           class="rounded-circle shadow-sm me-3 bg-light" 
+           style="height: 55px; width: 55px; object-fit: cover; border: 2px solid #D4AF37;"> 
+      <div class="d-flex flex-column">
+        <span style="letter-spacing: 0.5px; font-size: 1.3rem; line-height: 1.1;">Muebles Figueroa</span>
+        <small class="text-muted" style="font-size: 0.65rem; letter-spacing: 1.5px;">LEGADO Y TRADICIÓN</small>
+      </div>
+    </a>
+
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
     
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto align-items-center">
-        <li class="nav-item"><a class="nav-link" routerLink="/catalogo">Catálogo</a></li>
+        
+        <li class="nav-item">
+          <a class="nav-link px-3" routerLink="/" routerLinkActive="active text-white" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link px-3" routerLink="/catalogo" routerLinkActive="active text-white">Catálogo</a>
+        </li>
         
         <li class="nav-item mx-2">
-          <a class="nav-link position-relative" routerLink="/carrito">
+          <a class="nav-link position-relative px-3" routerLink="/carrito" routerLinkActive="active">
             <i class="bi bi-cart3 fs-5"></i>
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" *ngIf="cartCount > 0">
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger shadow-sm" 
+                  *ngIf="cartCount > 0" style="font-size: 0.65rem;">
               {{ cartCount }}
             </span>
           </a>
         </li>
 
         <li class="nav-item ms-lg-3" *ngIf="!usuario">
-          <div class="btn-group">
-            <a class="btn btn-primary btn-sm rounded-start-pill px-3" routerLink="/login">Ingresar</a>
-            <a class="btn btn-outline-primary btn-sm rounded-end-pill px-3" routerLink="/register">Registrarse</a>
+          <div class="btn-group shadow-sm">
+            <a class="btn btn-primary btn-sm rounded-start-pill px-4" routerLink="/login">Ingresar</a>
+            <a class="btn btn-outline-primary btn-sm rounded-end-pill px-4" routerLink="/register">Registrarse</a>
           </div>
         </li>
 
-        <li class="nav-item ms-lg-3 border-start ps-3 d-flex align-items-center" *ngIf="usuario">
-          <span class="text-white small me-3">
+        <li class="nav-item" *ngIf="isAdmin">
+          <a class="nav-link text-warning fw-bold px-3 d-flex align-items-center" routerLink="/admin" routerLinkActive="active">
+            <i class="bi bi-gear-fill me-1"></i> Admin
+          </a>
+        </li>
+
+        <li class="nav-item ms-lg-3 border-start border-secondary ps-lg-3 d-flex align-items-center" *ngIf="usuario">
+          <span class="text-white small me-3 fw-medium">
             <i class="bi" [ngClass]="isAdmin ? 'bi-shield-check text-warning' : 'bi-person-circle'"></i> 
             {{ usuario }}
           </span>
-          <button class="btn btn-outline-danger btn-sm rounded-pill px-3" (click)="logout()">Salir</button>
+          <button class="btn btn-outline-danger btn-sm rounded-pill px-3 shadow-sm" (click)="logout()">Salir</button>
         </li>
       </ul>
     </div>
   </div>
 </nav>
 
-<router-outlet></router-outlet>
+<main>
+  <router-outlet></router-outlet>
+</main>
